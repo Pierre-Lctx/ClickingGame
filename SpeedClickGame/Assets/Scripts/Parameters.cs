@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum Difficulty
+{
+    Easy,
+    Normal,
+    Hard
+}
+
 public class Parameters : MonoBehaviour
 {
     public static Parameters instance;
 
-    public int gameTime = 60;
+    public Difficulty Difficulty = Difficulty.Easy;
+    public bool ScalingChange = false;
+    public int GameTime = 60;
 
     private void Awake()
     {
