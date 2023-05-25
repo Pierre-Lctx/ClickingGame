@@ -13,6 +13,8 @@ public class MainMenu : MonoBehaviour
     public GameObject PanelMainMenu;
     public GameObject PanelOption;
 
+    public GameObject parametersObject;
+
     Parameters parameters;
 
     Color colorUnUse = new Color(62f / 255f, 62f / 255f, 62f / 255f, 1f);
@@ -24,7 +26,7 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        parameters = Parameters.instance;
+        parameters = parametersObject.GetComponent<Parameters>();
 
         PanelOption.SetActive(false);
         PanelMainMenu.SetActive(true);
@@ -36,142 +38,187 @@ public class MainMenu : MonoBehaviour
         {
             Image buttonImage = button.GetComponent<Image>();
             buttonImage.color = colorUnUse;
+            
+            button.enabled = true;
+        }
+    }
+
+    private Button FindButton(string name)
+    {
+        return GameObject.Find(name).GetComponent<Button>();
+    }
+
+    void ChangeColor()
+    {
+        //Changement des boutons de la durée de la partie
+        if (parameters.GameTime == 30)
+        {
+            Image button1 = FindButton("Button30").GetComponent<Image>();
+            button1.color = colorUse;
+
+            FindButton("Button30").enabled = false;
+
+            Image button2 = FindButton("Button60").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("Button60").enabled = true;
+
+            Image button3 = FindButton("Button90").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("Button90").enabled = true;
+        }
+        else if (parameters.GameTime == 60)
+        {
+            Image button1 = FindButton("Button30").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("Button30").enabled = true;
+
+            Image button2 = FindButton("Button60").GetComponent<Image>();
+            button2.color = colorUse;
+
+            FindButton("Button60").enabled = false;
+
+            Image button3 = FindButton("Button90").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("Button90").enabled = true;
+        }
+        else if (parameters.GameTime == 90)
+        {
+            Image button1 = FindButton("Button30").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("Button30").enabled = true;
+
+            Image button2 = FindButton("Button60").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("Button60").enabled = true;
+
+            Image button3 = FindButton("Button90").GetComponent<Image>();
+            button3.color = colorUse;
+
+            FindButton("Button90").enabled = false;
+        }
+
+        //Changement des boutons de changement de taille
+        if (parameters.ScalingChange)
+        {
+            Image button1 = FindButton("ButtonYes").GetComponent<Image>();
+            button1.color = colorEasyDifficultyButton;
+
+            FindButton("ButtonYes").enabled = false;
+
+            Image button2 = FindButton("ButtonNO").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonNO").enabled = true;
+        }
+        else
+        {
+            Image button1 = FindButton("ButtonYes").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonYes").enabled = true;
+
+            Image button2 = FindButton("ButtonNO").GetComponent<Image>();
+            button2.color = colorHardDifficultyButton;
+
+            FindButton("ButtonNO").enabled = false;
+        }
+
+        //Changement des boutons de la difficulté
+        if (parameters.Difficulty == Difficulty.Easy)
+        {
+            Image button1 = FindButton("ButtonEasy").GetComponent<Image>();
+            button1.color = colorEasyDifficultyButton;
+
+            FindButton("ButtonEasy").enabled = false;
+
+            Image button2 = FindButton("ButtonMedium").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonMedium").enabled = true;
+
+            Image button3 = FindButton("ButtonHard").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("ButtonHard").enabled = true;
+        }
+        else if (parameters.Difficulty == Difficulty.Normal)
+        {
+            Image button1 = FindButton("ButtonEasy").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonEasy").enabled = true;
+
+            Image button2 = FindButton("ButtonMedium").GetComponent<Image>();
+            button2.color = colorNormalDifficultyButton;
+
+            FindButton("ButtonMedium").enabled = false;
+
+            Image button3 = FindButton("ButtonHard").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("ButtonHard").enabled = true;
+        }
+        else if (parameters.Difficulty == Difficulty.Hard)
+        {
+            Image button1 = FindButton("ButtonEasy").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonEasy").enabled = true;
+
+            Image button2 = FindButton("ButtonMedium").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonMedium").enabled = true;
+
+            Image button3 = FindButton("ButtonHard").GetComponent<Image>();
+            button3.color = colorHardDifficultyButton;
+
+            FindButton("ButtonHard").enabled = false;
         }
     }
 
     public void SelectButton(Button button)
     {
-        if (button.name.Contains("30") || button.name.Contains("60") || button.name.Contains("90"))
+        if (button.name == "Button30")
         {
-            if (button.name == "Button30")
-            {
-                Image buttonImage = button.GetComponent<Image>();
-                buttonImage.color = colorUse;
-
-                parameters.GameTime = 30;
-
-                foreach (Button buttonF in buttonList)
-                {
-                    if (buttonF.name == "Button60" || buttonF.name == "Button90")
-                    {
-                        Image buttonImageOther = buttonF.GetComponent<Image>();
-                        buttonImage.color = colorUnUse;
-                    }
-                }
-            }
-            if (button.name == "Button60")
-            {
-                Image buttonImage = button.GetComponent<Image>();
-                buttonImage.color = colorUse;
-
-                parameters.GameTime = 60;
-
-                foreach(Button buttonF in buttonList)
-                {
-                    if (buttonF.name == "Button30" || buttonF.name == "Button90")
-                    {
-                        Image buttonImageOther = buttonF.GetComponent<Image>();
-                        buttonImage.color = colorUnUse;
-                    }
-                }
-            }
-            if (button.name == "Button90")
-            {
-                Image buttonImage = button.GetComponent<Image>();
-                buttonImage.color = colorUse;
-
-                parameters.GameTime = 90;
-
-                foreach (Button buttonF in buttonList)
-                {
-                    if (buttonF.name == "Button30" || buttonF.name == "Button60")
-                    {
-                        Image buttonImageOther = buttonF.GetComponent<Image>();
-                        buttonImage.color = colorUnUse;
-                    }
-                }
-            }
+            parameters.GameTime = 30;
         }
-        else if (button.name.Contains("Yes"))
+        else if (button.name == "Button60")
         {
-            Image buttonImage = button.GetComponent<Image>();
-            buttonImage.color = colorEasyDifficultyButton;
-
+            parameters.GameTime = 60;
+        }
+        else if (button.name == "Button90")
+        {
+            parameters.GameTime = 90;
+        }
+        else if (button.name == "ButtonYes")
+        {
             parameters.ScalingChange = true;
-
-            foreach (Button buttonF in buttonList)
-            {
-                if (buttonF.name == "ButtonNO")
-                {
-                    Image buttonImageOther = buttonF.GetComponent<Image>();
-                    buttonImage.color = colorUnUse;
-                }
-            }
         }
-        else if (button.name.Contains("NO"))
+        else if (button.name == "ButtonNO")
         {
-            Image buttonImage = button.GetComponent<Image>();
-            buttonImage.color = colorHardDifficultyButton;
-
             parameters.ScalingChange = false;
-
-            foreach (Button buttonF in buttonList)
-            {
-                if (buttonF.name == "ButtonYes")
-                {
-                    Image buttonImageOther = buttonF.GetComponent<Image>();
-                    buttonImage.color = colorUnUse;
-                }
-            }
         }
-        else if (button.name.Contains("Easy"))
+        else if (button.name == "ButtonEasy")
         {
-            Image buttonImage = button.GetComponent<Image>();
-            buttonImage.color = colorEasyDifficultyButton;
-
             parameters.Difficulty = Difficulty.Easy;
-
-            foreach (Button buttonF in buttonList)
-            {
-                if (buttonF.name == "ButtonMedium" || buttonF.name == "ButtonHard")
-                {
-                    Image buttonImageOther = buttonF.GetComponent<Image>();
-                    buttonImage.color = colorUnUse;
-                }
-            }
         }
-        else if (button.name.Contains("Medium"))
+        else if (button.name == "ButtonMedium")
         {
-            Image buttonImage = button.GetComponent<Image>();
-            buttonImage.color = colorNormalDifficultyButton;
-
             parameters.Difficulty = Difficulty.Normal;
-
-            foreach (Button buttonF in buttonList)
-            {
-                if (buttonF.name == "ButtonEasy" || buttonF.name == "ButtonHard")
-                {
-                    Image buttonImageOther = buttonF.GetComponent<Image>();
-                    buttonImage.color = colorUnUse;
-                }
-            }
         }
-        else if (button.name.Contains("Hard"))
+        else if (button.name == "ButtonHard")
         {
-            Image buttonImage = button.GetComponent<Image>();
-            buttonImage.color = colorHardDifficultyButton;
-
             parameters.Difficulty = Difficulty.Hard;
-
-            foreach (Button buttonF in buttonList)
-            {
-                if (buttonF.name == "ButtonMedium" || buttonF.name == "ButtonEasy")
-                {
-                    Image buttonImageOther = buttonF.GetComponent<Image>();
-                    buttonImage.color = colorUnUse;
-                }
-            }
         }
+
+        ChangeColor();
     }
 
     public void Play()
@@ -184,6 +231,8 @@ public class MainMenu : MonoBehaviour
         ResetButton();
         PanelOption.SetActive(true);
         PanelMainMenu.SetActive(false);
+
+        ChangeColor();
     }
 
     public void Return()

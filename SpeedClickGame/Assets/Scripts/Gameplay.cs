@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class Gameplay : MonoBehaviour
 {
+    [Header("Paramètres V1"), Space]
     public TMP_Text timerText;
     public TMP_Text scoreText;
     public TMP_Text endText;
@@ -16,22 +17,54 @@ public class Gameplay : MonoBehaviour
 
     Color colorUnUse = new Color(59f / 255f, 59f / 255f, 59f / 255f, 1f);
 
+
     public int score;
     public Time time;
 
     public List<Button> buttonList;
     public List<TMP_Text> buttonsTextList;
 
-    public float totalTime = 60f;
+    public float totalTime;
     private float currentTime; // Temps restant actuel
 
     public List<string> trollWords;
 
+    //Code ajouté de la V2
+    [Space,Header("Paramètres V2"), Space]
+    public GameObject parametersObject;
+
+    Parameters parameters;
+
+    public float targetScale = 0.25f;
+    public float scalingDuration = 0.75f;
+    public float resetDuration = 0.5f;
+    public float initialDelay = 0.25f;
+
+    public bool isScaling = false;
+
+    public List<Vector3> originScales;
+
+    private Coroutine coroutine = null;
+
+    //Fin de code ajouté de la V2
+
     // Start is called before the first frame update
     void Start()
     {
-        timerText.text = "60";
+        parameters = parametersObject.GetComponent<Parameters>();
+
+        totalTime = parameters.GameTime;
+
         scoreText.text = "0 Touch";
+
+        //Code ajouté de la V2
+
+        foreach(Button button in buttonList)
+        {
+            originScales.Add(button.transform.localScale);
+        }
+
+        //Fin code ajouté de la V2
 
         ResetButton();
         ResetText();
@@ -66,7 +99,11 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (parameters.ScalingChange)
+        {
+            //La taille des boutons doit changer
+
+        }
     }
 
     private void Countdown()
@@ -131,10 +168,30 @@ public class Gameplay : MonoBehaviour
         }
     }
 
-    public void OnClick()
+    public void OnClick(Button button)
     {
+        //Code ajouté de la V2
+
+        if (!isScaling && parameters.ScalingChange)
+        {
+            coroutine = StartCoroutine(ScaleButton(buttonList.IndexOf(button)));
+        }
+        else if (isScaling && parameters.ScalingChange)
+        {
+            StopCoroutine(coroutine);
+            StartCoroutine(ResetButton(buttonList.IndexOf(button)));
+        }
+
+        //Fin du code ajouté de la V2
+
         ChangeScore();
         ChooseRandomButton();
+
+        //Code ajouté de la V2
+
+
+
+        //Fin du code ajouté de la V2
     }
 
     void ChangeScore()
@@ -160,6 +217,11 @@ public class Gameplay : MonoBehaviour
         int r = (int)Random.Range(0, 256);
         int g = (int)Random.Range(0, 256);
         int b = (int)Random.Range(0, 256);
+
+        if (!isScaling && parameters.ScalingChange && coroutine == null)
+        {
+            coroutine = StartCoroutine(ScaleButton(index));
+        }
 
         ResetButton();
         ResetText();
@@ -190,4 +252,44 @@ public class Gameplay : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    //Code ajouté de la V2
+
+    private IEnumerator ScaleButton(int buttonIndex)
+    {
+        isScaling = true;
+        float timer = 0f;
+        Button button = buttonList[buttonIndex];
+
+        while (timer < scalingDuration)
+        {
+            timer += Time.deltaTime;
+            float scaleRatio = Mathf.Lerp(1f, targetScale, timer / scalingDuration);
+            button.transform.localScale = originScales[buttonIndex] * scaleRatio;
+            yield return null;
+        }
+
+        button.transform.localScale = originScales[buttonIndex] * targetScale;
+        isScaling = false;
+    }
+
+    private IEnumerator ResetButton(int buttonIndex)
+    {
+        isScaling = true;
+        float timer = 0f;
+        Button button = buttonList[buttonIndex];
+
+        while (timer < resetDuration)
+        {
+            timer += Time.deltaTime;
+            float scaleRatio = Mathf.Lerp(targetScale, 1f, timer / resetDuration);
+            button.transform.localScale = originScales[buttonIndex] * scaleRatio;
+            yield return null;
+        }
+
+        button.transform.localScale = originScales[buttonIndex];
+        isScaling = false;
+    }
+
+    //Fin de code ajouté de la V2
 }

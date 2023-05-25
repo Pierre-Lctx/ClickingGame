@@ -16,7 +16,7 @@ public class Parameters : MonoBehaviour
 
     public Difficulty Difficulty = Difficulty.Easy;
     public bool ScalingChange = false;
-    public int GameTime = 60;
+    public float GameTime = 60;
 
     private void Awake()
     {
