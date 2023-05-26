@@ -1,104 +1,86 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ButtonScaling : MonoBehaviour
 {
-    public float targetScale = 0.25f;
-    public float scalingDuration = 0.75f;
-    public float resetDuration = 0.5f;
-    public float initialDelay = 0.25f;
+    public float shrinkDuration = 1.25f;
+    public const float originalScale = 1f;
+    public float shrinkScale = 0.1f;
 
-    private bool isFirstButtonClick = true;
-    public bool isScaling = false;
-    private Vector3[] originalScales;
-    public Button[] buttons;
+    public bool isClick = false;
+    public bool canClick = true;
+    public List<Button> buttons;
+    public int score = 0;
+
+    private Coroutine shrinkCoroutine;
 
     private void Start()
     {
-        buttons = GetComponentsInChildren<Button>();
-        originalScales = new Vector3[buttons.Length];
+        SelectButton();
+    }
 
-        for (int i = 0; i < buttons.Length; i++)
+    void SelectButton()
+    {
+        // Désactiver tous les boutons sauf un bouton aléatoire
+        foreach (Button button in buttons)
         {
-            originalScales[i] = buttons[i].transform.localScale;
+            button.gameObject.SetActive(false);
+        }
+
+        Button randomButton = GetRandomButton();
+        if (randomButton != null)
+        {
+            randomButton.gameObject.SetActive(true);
+
+            isClick = false; // Réinitialiser isClick à false
+            shrinkCoroutine = StartCoroutine(ShrinkButton(randomButton));
         }
     }
 
-    private void Update()
+    public void OnButtonClick()
     {
-        if (isFirstButtonClick)
+        score++;
+        isClick = true;
+
+        if (shrinkCoroutine != null)
         {
-            StartCoroutine(WaitForFirstButtonClick());
-            isFirstButtonClick = false;
+            StopCoroutine(shrinkCoroutine);
         }
+
+        SelectButton();
     }
 
-    private IEnumerator WaitForFirstButtonClick()
+    private IEnumerator ShrinkButton(Button button)
     {
-        float timer = 0f;
+        canClick = false;
 
-        while (timer < initialDelay)
+        // Diminuer la taille du bouton pendant la durée spécifiée
+        float timeElapsed = 0f;
+        while (timeElapsed < shrinkDuration)
         {
-            timer += Time.deltaTime;
+            if (isClick)
+            {
+                // Rétablir la taille d'origine du bouton
+                button.transform.localScale = Vector3.one * originalScale;
+
+                isClick = false;
+                break;
+            }
+            float t = timeElapsed / shrinkDuration;
+            button.transform.localScale = Vector3.Lerp(Vector3.one * originalScale, Vector3.one * shrinkScale, t);
+            timeElapsed += Time.deltaTime;
             yield return null;
         }
 
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            buttons[i].onClick.AddListener(() => OnButtonClick(i));
-        }
+        canClick = true;
     }
 
-    public void OnButtonClick(int buttonIndex)
+    private Button GetRandomButton()
     {
-        if (!isScaling)
-        {
-            StartCoroutine(ScaleButton(buttonIndex));
-        }
-        else
-        {
-            StopAllCoroutines();
-            StartCoroutine(ResetButton(buttonIndex));
-        }
-    }
-
-    private IEnumerator ScaleButton(int buttonIndex)
-    {
-        isScaling = true;
-        float timer = 0f;
-        Button button = buttons[buttonIndex];
-        Vector3 startScale = button.transform.localScale;
-
-        while (timer < scalingDuration)
-        {
-            timer += Time.deltaTime;
-            float scaleRatio = Mathf.Lerp(1f, targetScale, timer / scalingDuration);
-            button.transform.localScale = originalScales[buttonIndex] * scaleRatio;
-            yield return null;
-        }
-
-        button.transform.localScale = originalScales[buttonIndex] * targetScale;
-        isScaling = false;
-    }
-
-    private IEnumerator ResetButton(int buttonIndex)
-    {
-        isScaling = true;
-        float timer = 0f;
-        Button button = buttons[buttonIndex];
-        Vector3 startScale = button.transform.localScale;
-
-        while (timer < resetDuration)
-        {
-            timer += Time.deltaTime;
-            float scaleRatio = Mathf.Lerp(targetScale, 1f, timer / resetDuration);
-            button.transform.localScale = originalScales[buttonIndex] * scaleRatio;
-            yield return null;
-        }
-
-        button.transform.localScale = originalScales[buttonIndex];
-        isScaling = false;
+        return buttons[(int)Random.Range(0, buttons.Count)];
     }
 }

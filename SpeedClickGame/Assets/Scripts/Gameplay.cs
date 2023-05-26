@@ -30,39 +30,28 @@ public class Gameplay : MonoBehaviour
     public List<string> trollWords;
 
     //Code ajouté de la V2
-    [Space,Header("Paramètres V2"), Space]
-    public GameObject parametersObject;
+    [Space, Header("Paramètres V2"), Space]
+    public float shrinkDuration = 1.25f;
+    public const float originalScale = 1f;
+    public float shrinkScale = 0.1f;
 
-    Parameters parameters;
+    public bool isClick = false;
+    public bool canClick = true;
 
-    public float targetScale = 0.25f;
-    public float scalingDuration = 0.75f;
-    public float resetDuration = 0.5f;
-    public float initialDelay = 0.25f;
-
-    public bool isScaling = false;
-
-    public List<Vector3> originScales;
-
-    private Coroutine coroutine = null;
+    private Coroutine shrinkCoroutine;
+    public Parameters parameters;
 
     //Fin de code ajouté de la V2
 
     // Start is called before the first frame update
     void Start()
     {
-        parameters = parametersObject.GetComponent<Parameters>();
-
-        totalTime = parameters.GameTime;
-
         scoreText.text = "0 Touch";
 
         //Code ajouté de la V2
 
-        foreach(Button button in buttonList)
-        {
-            originScales.Add(button.transform.localScale);
-        }
+        parameters = FindAnyObjectByType<Parameters>();
+        totalTime = parameters.GameTime;
 
         //Fin code ajouté de la V2
 
@@ -99,11 +88,7 @@ public class Gameplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (parameters.ScalingChange)
-        {
-            //La taille des boutons doit changer
 
-        }
     }
 
     private void Countdown()
@@ -170,28 +155,24 @@ public class Gameplay : MonoBehaviour
 
     public void OnClick(Button button)
     {
-        //Code ajouté de la V2
-
-        if (!isScaling && parameters.ScalingChange)
+        //Code ajouté à la V2
+        
+        isClick = true;
+        
+        if (parameters.ScalingChange)
         {
-            coroutine = StartCoroutine(ScaleButton(buttonList.IndexOf(button)));
-        }
-        else if (isScaling && parameters.ScalingChange)
-        {
-            StopCoroutine(coroutine);
-            StartCoroutine(ResetButton(buttonList.IndexOf(button)));
+            if (shrinkCoroutine != null)
+            {
+                // Rétablir la taille d'origine du bouton
+                button.transform.localScale = Vector3.one * originalScale;
+                StopCoroutine(shrinkCoroutine);
+            }
         }
 
-        //Fin du code ajouté de la V2
+        //Fin de code ajouté à la V2
 
         ChangeScore();
         ChooseRandomButton();
-
-        //Code ajouté de la V2
-
-
-
-        //Fin du code ajouté de la V2
     }
 
     void ChangeScore()
@@ -218,11 +199,6 @@ public class Gameplay : MonoBehaviour
         int g = (int)Random.Range(0, 256);
         int b = (int)Random.Range(0, 256);
 
-        if (!isScaling && parameters.ScalingChange && coroutine == null)
-        {
-            coroutine = StartCoroutine(ScaleButton(index));
-        }
-
         ResetButton();
         ResetText();
 
@@ -246,50 +222,49 @@ public class Gameplay : MonoBehaviour
         {
             buttonsTextList[index].color = Color.white;
         }
+
+        //Code ajouté à la V2
+
+        if (parameters.ScalingChange)
+        {
+            isClick = false; // Réinitialiser isClick à false
+            shrinkCoroutine = StartCoroutine(ShrinkButton(buttonList[index]));
+        }
+            
+        //Fin de code ajouté à la V2
     }
+
+    //Code ajouté à la V2
+
+    private IEnumerator ShrinkButton(Button button)
+    {
+        canClick = false;
+
+        // Diminuer la taille du bouton pendant la durée spécifiée
+        float timeElapsed = 0f;
+        while (timeElapsed < shrinkDuration)
+        {
+            if (isClick)
+            {
+                // Rétablir la taille d'origine du bouton
+                button.transform.localScale = Vector3.one * originalScale;
+
+                isClick = false;
+                break;
+            }
+            float t = timeElapsed / shrinkDuration;
+            button.transform.localScale = Vector3.Lerp(Vector3.one * originalScale, Vector3.one * shrinkScale, t);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        canClick = true;
+    }
+
+    //Fin code ajouté à la V2
 
     public void GoBackToMenu()
     {
         SceneManager.LoadScene("MainMenu");
     }
-
-    //Code ajouté de la V2
-
-    private IEnumerator ScaleButton(int buttonIndex)
-    {
-        isScaling = true;
-        float timer = 0f;
-        Button button = buttonList[buttonIndex];
-
-        while (timer < scalingDuration)
-        {
-            timer += Time.deltaTime;
-            float scaleRatio = Mathf.Lerp(1f, targetScale, timer / scalingDuration);
-            button.transform.localScale = originScales[buttonIndex] * scaleRatio;
-            yield return null;
-        }
-
-        button.transform.localScale = originScales[buttonIndex] * targetScale;
-        isScaling = false;
-    }
-
-    private IEnumerator ResetButton(int buttonIndex)
-    {
-        isScaling = true;
-        float timer = 0f;
-        Button button = buttonList[buttonIndex];
-
-        while (timer < resetDuration)
-        {
-            timer += Time.deltaTime;
-            float scaleRatio = Mathf.Lerp(targetScale, 1f, timer / resetDuration);
-            button.transform.localScale = originScales[buttonIndex] * scaleRatio;
-            yield return null;
-        }
-
-        button.transform.localScale = originScales[buttonIndex];
-        isScaling = false;
-    }
-
-    //Fin de code ajouté de la V2
 }

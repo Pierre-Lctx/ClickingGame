@@ -2219,6 +2219,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1045060656}
   m_CullTransparentMesh: 1
+--- !u!1 &1052764590
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1052764592}
+  - component: {fileID: 1052764591}
+  m_Layer: 0
+  m_Name: Parameters Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1052764591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052764590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c899b44daab4ddf4d811770963a086c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Difficulty: 0
+  ScalingChange: 0
+  GameTime: 60
+--- !u!4 &1052764592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052764590}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 528.1244, y: 268.66647, z: 2.5293887}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1092964822
 GameObject:
   m_ObjectHideFlags: 0
@@ -2229,7 +2276,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1092964825}
   - component: {fileID: 1092964823}
-  - component: {fileID: 1092964826}
   m_Layer: 0
   m_Name: GameManagerMainMenu
   m_TagString: Untagged
@@ -2260,7 +2306,7 @@ MonoBehaviour:
   - {fileID: 1157313024}
   PanelMainMenu: {fileID: 1345873741}
   PanelOption: {fileID: 1466912187}
-  parametersObject: {fileID: 1092964822}
+  parametersObject: {fileID: 1052764590}
 --- !u!4 &1092964825
 Transform:
   m_ObjectHideFlags: 0
@@ -2276,21 +2322,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1092964826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1092964822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c899b44daab4ddf4d811770963a086c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Difficulty: 0
-  ScalingChange: 0
-  GameTime: 60
 --- !u!1 &1157313022
 GameObject:
   m_ObjectHideFlags: 0
@@ -4597,7 +4628,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2054454041}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1092964823}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: Return
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2054454041
 MonoBehaviour:
   m_ObjectHideFlags: 0
