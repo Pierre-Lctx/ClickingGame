@@ -15,7 +15,7 @@ public class Gameplay : MonoBehaviour
 
     public GameObject panel;
 
-    Color colorUnUse = new Color(59f / 255f, 59f / 255f, 59f / 255f, 1f);
+    Color colorUnUse = new Color(59f / 255f, 59f / 255f, 59f / 255f, 132 / 255);
 
 
     public int score;
@@ -32,12 +32,14 @@ public class Gameplay : MonoBehaviour
     //Code ajouté de la V2
 
     [Space, Header("Paramètres V2"), Space]
-    public float shrinkDuration = 1.25f;
+    public float shrinkDuration;
     public const float originalScale = 1f;
-    public float shrinkScale = 0.1f;
+    public float shrinkScale;
 
     public bool isClick = false;
     public bool canClick = true;
+
+    public Button targetButton;
 
     private Coroutine shrinkCoroutine;
     public Parameters parameters;
@@ -53,6 +55,8 @@ public class Gameplay : MonoBehaviour
 
         parameters = FindAnyObjectByType<Parameters>();
         totalTime = parameters.GameTime;
+        shrinkDuration = parameters.CoolDownScalingChange;
+        shrinkScale = parameters.MinimumSizeScalingChange;
 
         //Fin code ajouté de la V2
 
@@ -68,22 +72,11 @@ public class Gameplay : MonoBehaviour
         scoreText.gameObject.SetActive(true);
         timerText.gameObject.SetActive(true);
 
+
         // Démarre le timer en appelant la méthode "Countdown" toutes les secondes
         InvokeRepeating("Countdown", 1f, 1f);
 
         ChooseRandomButton();
-    }
-
-    public void OnMouseDown()
-    {
-        if (gameObject.activeSelf)
-        {
-            Debug.Log("Objet cliqué : " + gameObject.name + " est activé.");
-        }
-        else
-        {
-            Debug.Log("Objet cliqué : " + gameObject.name + " est désactivé.");
-        }
     }
 
     // Update is called once per frame
@@ -147,7 +140,7 @@ public class Gameplay : MonoBehaviour
     {
         foreach (Button button in buttonList)
         {
-            button.enabled = false;
+            button.interactable = false;
 
             Image buttonImage = button.GetComponent<Image>();
             buttonImage.color = colorUnUse;
@@ -159,6 +152,8 @@ public class Gameplay : MonoBehaviour
         //Code ajouté à la V2
         
         isClick = true;
+
+        //Debug.Log("Clicked");
         
         if (parameters.ScalingChange)
         {
@@ -203,7 +198,9 @@ public class Gameplay : MonoBehaviour
         ResetButton();
         ResetText();
 
-        buttonList[index].enabled = true;
+        targetButton = buttonList[index];
+
+        buttonList[index].interactable = true;
         buttonsTextList[index].text = trollWords[indexWord];
         //Debug.Log($"Changing color to {buttonList[index].name} : Color({r},{g},{b},255)");
         Color newColor = new Color(r / 255f, g / 255f, b / 255f, 1f);
