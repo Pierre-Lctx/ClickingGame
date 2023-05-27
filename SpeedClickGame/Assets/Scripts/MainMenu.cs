@@ -146,6 +146,11 @@ public class MainMenu : MonoBehaviour
             button3.color = colorUnUse;
 
             FindButton("ButtonHard").enabled = true;
+
+            Image button4 = FindButton("ButtonCustom").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("ButtonCustom").enabled = true;
         }
         else if (parameters.Difficulty == Difficulty.Normal)
         {
@@ -163,6 +168,11 @@ public class MainMenu : MonoBehaviour
             button3.color = colorUnUse;
 
             FindButton("ButtonHard").enabled = true;
+
+            Image button4 = FindButton("ButtonCustom").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("ButtonCustom").enabled = true;
         }
         else if (parameters.Difficulty == Difficulty.Hard)
         {
@@ -180,6 +190,149 @@ public class MainMenu : MonoBehaviour
             button3.color = colorHardDifficultyButton;
 
             FindButton("ButtonHard").enabled = false;
+
+            Image button4 = FindButton("ButtonCustom").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("ButtonCustom").enabled = true;
+        }
+        else if (parameters.Difficulty == Difficulty.Custom)
+        {
+            Image button1 = FindButton("ButtonEasy").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonEasy").enabled = true;
+
+            Image button2 = FindButton("ButtonMedium").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonMedium").enabled = true;
+
+            Image button3 = FindButton("ButtonHard").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("ButtonHard").enabled = true;
+
+            Image button4 = FindButton("ButtonCustom").GetComponent<Image>();
+            button4.color = colorUse;
+
+            FindButton("ButtonCustom").enabled = false;
+        }
+        else if (parameters.CoolDownScalingChange == 0.5f)
+        {
+            Debug.Log("Changement color 0.5");
+            Image button1 = FindButton("Button05").GetComponent<Image>();
+            button1.color = colorUse;
+
+            FindButton("Button05").enabled = false;
+
+            Image button2 = FindButton("Button075").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("Button075").enabled = true;
+
+            Image button3 = FindButton("Button1").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("Button1").enabled = true;
+
+            Image button4 = FindButton("Button125").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("Button125").enabled = true;
+        }
+        else if (parameters.CoolDownScalingChange == 0.75f)
+        {
+            Debug.Log("Changement color 0.75");
+            Image button1 = FindButton("Button05").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("Button05").enabled = true;
+
+            Image button2 = FindButton("Button075").GetComponent<Image>();
+            button2.color = colorUse;
+
+            FindButton("Button075").enabled = false;
+
+            Image button3 = FindButton("Button1").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("Button1").enabled = true;
+
+            Image button4 = FindButton("Button125").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("Button125").enabled = true;
+        }
+        else if (parameters.CoolDownScalingChange == 1f)
+        {
+            Debug.Log("Changement color 1");
+            Image button1 = FindButton("Button05").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("Button05").enabled = true;
+
+            Image button2 = FindButton("Button075").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("Button075").enabled = true;
+
+            Image button3 = FindButton("Button1").GetComponent<Image>();
+            button3.color = colorUse;
+
+            FindButton("Button1").enabled = false;
+
+            Image button4 = FindButton("Button125").GetComponent<Image>();
+            button4.color = colorUnUse;
+
+            FindButton("Button125").enabled = true;
+        }
+        else if (parameters.CoolDownScalingChange == 1.25f)
+        {
+            Debug.Log("Changement color 1.25");
+            Image button1 = FindButton("Button05").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("Button05").enabled = true;
+
+            Image button2 = FindButton("Button075").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("Button075").enabled = true;
+
+            Image button3 = FindButton("Button1").GetComponent<Image>();
+            button3.color = colorUnUse;
+
+            FindButton("Button1").enabled = true;
+
+            Image button4 = FindButton("Button125").GetComponent<Image>();
+            button4.color = colorUse;
+
+            FindButton("Button125").enabled = false;
+        }
+        else if (parameters.MinimumSizeScalingChange == 0.1f)
+        {
+            Image button1 = FindButton("ButtonDizieme").GetComponent<Image>();
+            button1.color = colorUse;
+
+            FindButton("ButtonDizieme").enabled = false;
+
+            Image button2 = FindButton("ButtonQuart").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonQuart").enabled = true;
+        }
+        else if (parameters.MinimumSizeScalingChange == 0.25f)
+        {
+            Image button1 = FindButton("ButtonDizieme").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonDizieme").enabled = true;
+
+            Image button2 = FindButton("ButtonQuart").GetComponent<Image>();
+            button2.color = colorUse;
+
+            FindButton("ButtonQuart").enabled = false;
         }
     }
 
@@ -208,14 +361,56 @@ public class MainMenu : MonoBehaviour
         else if (button.name == "ButtonEasy")
         {
             parameters.Difficulty = Difficulty.Easy;
+            parameters.ScalingChange = false;
+            parameters.GameTime = 60;
         }
         else if (button.name == "ButtonMedium")
         {
             parameters.Difficulty = Difficulty.Normal;
+            parameters.ScalingChange = true;
+            parameters.GameTime = 30;
+            parameters.MinimumSizeScalingChange = 0.25f;
+            parameters.CoolDownScalingChange = 1f;
         }
         else if (button.name == "ButtonHard")
         {
             parameters.Difficulty = Difficulty.Hard;
+            parameters.ScalingChange = true;
+            parameters.GameTime = 60;
+            parameters.MinimumSizeScalingChange = 0.1f;
+            parameters.CoolDownScalingChange = 0.75f;
+        }
+        else if (button.name == "ButtonCustom")
+        {
+            parameters.Difficulty = Difficulty.Custom;
+            parameters.ScalingChange = false;
+            parameters.GameTime = 60;
+            parameters.MinimumSizeScalingChange = 0.25f;
+            parameters.CoolDownScalingChange = 1.25f;
+        }
+        else if (button.name == "ButtonQuart")
+        {
+            parameters.MinimumSizeScalingChange = 0.25f;
+        }
+        else if (button.name == "ButtonDizieme")
+        {
+            parameters.MinimumSizeScalingChange = 0.1f;
+        }
+        else if (button.name == "Button05")
+        {
+            parameters.CoolDownScalingChange = 0.5f;
+        }
+        else if (button.name == "Button075")
+        {
+            parameters.CoolDownScalingChange = 0.75f;
+        }
+        else if (button.name == "Button1")
+        {
+            parameters.CoolDownScalingChange = 1f;
+        }
+        else if (button.name == "Button125")
+        {
+            parameters.CoolDownScalingChange = 1.25f;
         }
 
         ChangeColor();

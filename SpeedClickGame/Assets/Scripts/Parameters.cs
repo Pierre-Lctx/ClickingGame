@@ -7,7 +7,8 @@ public enum Difficulty
 {
     Easy,
     Normal,
-    Hard
+    Hard,
+    Custom
 }
 
 public class Parameters : MonoBehaviour
@@ -17,6 +18,9 @@ public class Parameters : MonoBehaviour
     public Difficulty Difficulty = Difficulty.Easy;
     public bool ScalingChange = false;
     public float GameTime = 60;
+
+    public float CoolDownScalingChange = .75f;
+    public float MinimumSizeScalingChange = .25f;
 
     private void Awake()
     {

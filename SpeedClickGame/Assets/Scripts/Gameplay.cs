@@ -30,6 +30,7 @@ public class Gameplay : MonoBehaviour
     public List<string> trollWords;
 
     //Code ajouté de la V2
+
     [Space, Header("Paramètres V2"), Space]
     public float shrinkDuration = 1.25f;
     public const float originalScale = 1f;
