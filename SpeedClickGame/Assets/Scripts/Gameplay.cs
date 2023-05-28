@@ -41,6 +41,17 @@ public class Gameplay : MonoBehaviour
 
     public Button targetButton;
 
+    public float transitionDuration = 1f;
+    public Color startColor = Color.white;
+    public Color targetColor = Color.red;
+
+    public List<Image> hearts;
+    public int lifeRemaning = 3;
+
+    public GameObject panelLife;
+
+    private bool isTransitioning = false;
+
     private Coroutine shrinkCoroutine;
     public Parameters parameters;
 
@@ -57,6 +68,15 @@ public class Gameplay : MonoBehaviour
         totalTime = parameters.GameTime;
         shrinkDuration = parameters.CoolDownScalingChange;
         shrinkScale = parameters.MinimumSizeScalingChange;
+
+        if (parameters.GameType == GameType.Decrement)
+        {
+            panelLife.SetActive(false);
+        }
+        else
+        {
+            panelLife.SetActive(true);
+        }
 
         //Fin code ajouté de la V2
 
@@ -91,24 +111,7 @@ public class Gameplay : MonoBehaviour
 
         if (currentTime <= 0f)
         {
-            currentTime = 0f;
-
-            ResetButton();
-            ResetText();
-
-            endText.text = score + " Touch";
-
-            panel.SetActive(false);
-            endText.gameObject.SetActive(true);
-            informationText.gameObject.SetActive(true);
-
-            scoreText.gameObject.SetActive(false);
-            timerText.gameObject.SetActive(false);
-
-            // Arrête le timer lorsque le temps est écoulé
-            CancelInvoke("Countdown");
-
-            StartCoroutine(GameOverRoutine());
+            StopScreen();
         }
 
         UpdateTimerText();
@@ -140,7 +143,7 @@ public class Gameplay : MonoBehaviour
     {
         foreach (Button button in buttonList)
         {
-            button.interactable = false;
+            button.enabled = false;
 
             Image buttonImage = button.GetComponent<Image>();
             buttonImage.color = colorUnUse;
@@ -167,13 +170,152 @@ public class Gameplay : MonoBehaviour
 
         //Fin de code ajouté à la V2
 
-        ChangeScore();
+        ChangeScore(button.gameObject);
         ChooseRandomButton();
     }
 
-    void ChangeScore()
+    //Code de la V2
+
+    void StopScreen()
     {
-        score++;
+        currentTime = 0f;
+
+        ResetButton();
+        ResetText();
+
+        endText.text = score + " Touch";
+
+        panel.SetActive(false);
+        endText.gameObject.SetActive(true);
+        informationText.gameObject.SetActive(true);
+
+        scoreText.gameObject.SetActive(false);
+        timerText.gameObject.SetActive(false);
+
+        GameData data = new GameData();
+        if (parameters.Difficulty == Difficulty.Easy)
+        {
+            data.gameMode = "Easy";
+        }
+        else if (parameters.Difficulty == Difficulty.Normal)
+        {
+            data.gameMode = "Normal";
+        }
+        else if (parameters.Difficulty == Difficulty.Hard)
+        {
+            data.gameMode = "Hard";
+        }
+        else
+        {
+            data.gameMode = "Custom";
+        }
+        data.score = score;
+
+        // Arrête le timer lorsque le temps est écoulé
+        CancelInvoke("Countdown");
+
+        StartCoroutine(GameOverRoutine());
+    }
+
+    public void OnPanelClick(GameObject panel)
+    {
+        //Code ajouté à la V2
+
+        isClick = true;
+
+        //Debug.Log("Clicked");
+
+        if (parameters.ScalingChange)
+        {
+            if (shrinkCoroutine != null)
+            {
+                // Rétablir la taille d'origine du bouton
+                targetButton.transform.localScale = Vector3.one * originalScale;
+                StopCoroutine(shrinkCoroutine);
+            }
+        }
+
+        if (parameters.GameType == GameType.Life)
+        {
+            if (lifeRemaning > 1)
+            {
+                Color color = new Color(0, 0, 0, 1);
+
+                hearts[lifeRemaning - 1].color = color;
+                lifeRemaning--;
+            }
+            else
+            {
+                Color color = new Color(0, 0, 0, 1);
+
+                hearts[0].color = color;
+                lifeRemaning--;
+
+                StopScreen();
+            }
+        }
+
+        //Fin de code ajouté à la V2
+
+        ChangeScore(panel);
+        ChooseRandomButton();
+    }
+
+    private IEnumerator TransitionColor()
+    {
+        isTransitioning = true;
+
+        float timeElapsed = 0f;
+        Color currentTimerColor = timerText.color;
+        Color currentScoreColor = scoreText.color;
+
+        while (timeElapsed < transitionDuration)
+        {
+            float normalizedTime = timeElapsed / transitionDuration;
+            timerText.color = Color.Lerp(currentTimerColor, targetColor, normalizedTime);
+            scoreText.color = Color.Lerp(currentScoreColor, targetColor, normalizedTime);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reverse transition
+        timeElapsed = 0f;
+
+        while (timeElapsed < transitionDuration)
+        {
+            float normalizedTime = timeElapsed / transitionDuration;
+            timerText.color = Color.Lerp(targetColor, startColor, normalizedTime);
+            scoreText.color = Color.Lerp(targetColor, startColor, normalizedTime);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        timerText.color = startColor;
+        scoreText.color = startColor;
+        isTransitioning = false;
+    }
+
+    //Fin ajout de code de la V2
+
+    void ChangeScore(GameObject button)
+    {
+        if (button == targetButton.gameObject)
+        {
+            score++;
+        }
+        else
+        {
+            if (parameters.GameType == GameType.Decrement)
+            {
+                score--;
+
+                if (!isTransitioning)
+                    StartCoroutine(TransitionColor());
+            }
+        }
+        
         scoreText.text = score + " Touch";
     }
 
@@ -200,7 +342,7 @@ public class Gameplay : MonoBehaviour
 
         targetButton = buttonList[index];
 
-        buttonList[index].interactable = true;
+        buttonList[index].enabled = true;
         buttonsTextList[index].text = trollWords[indexWord];
         //Debug.Log($"Changing color to {buttonList[index].name} : Color({r},{g},{b},255)");
         Color newColor = new Color(r / 255f, g / 255f, b / 255f, 1f);
@@ -260,9 +402,4 @@ public class Gameplay : MonoBehaviour
     }
 
     //Fin code ajouté à la V2
-
-    public void GoBackToMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
 }

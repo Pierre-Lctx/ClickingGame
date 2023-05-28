@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -245,6 +246,32 @@ public class MainMenu : MonoBehaviour
             FindButton("Button125").enabled = false;
         }
 
+        //Changement des boutons du type de jeu
+        if (parameters.GameType == GameType.Decrement)
+        {
+            Image button1 = FindButton("ButtonDecrementiel").GetComponent<Image>();
+            button1.color = colorUse;
+
+            FindButton("ButtonDecrementiel").enabled = false;
+
+            Image button2 = FindButton("ButtonLife").GetComponent<Image>();
+            button2.color = colorUnUse;
+
+            FindButton("ButtonLife").enabled = true;
+        }
+        else if (parameters.GameType == GameType.Life)
+        {
+            Image button1 = FindButton("ButtonDecrementiel").GetComponent<Image>();
+            button1.color = colorUnUse;
+
+            FindButton("ButtonDecrementiel").enabled = true;
+
+            Image button2 = FindButton("ButtonLife").GetComponent<Image>();
+            button2.color = colorUse;
+
+            FindButton("ButtonLife").enabled = false;
+        }
+
         //Changement des boutons de la difficulté
         if (parameters.Difficulty == Difficulty.Easy)
         {
@@ -278,6 +305,8 @@ public class MainMenu : MonoBehaviour
             FindButton("Button90").enabled = false;
             FindButton("ButtonYes").enabled = false;
             FindButton("ButtonNO").enabled = false;
+            FindButton("ButtonDecrementiel").enabled = false;
+            FindButton("ButtonLife").enabled = false;
         }
         else if (parameters.Difficulty == Difficulty.Normal)
         {
@@ -313,6 +342,8 @@ public class MainMenu : MonoBehaviour
             FindButton("Button90").enabled = false;
             FindButton("ButtonYes").enabled = false;
             FindButton("ButtonNO").enabled = false;
+            FindButton("ButtonDecrementiel").enabled = false;
+            FindButton("ButtonLife").enabled = false;
         }
         else if (parameters.Difficulty == Difficulty.Hard)
         {
@@ -348,6 +379,8 @@ public class MainMenu : MonoBehaviour
             FindButton("Button90").enabled = false;
             FindButton("ButtonYes").enabled = false;
             FindButton("ButtonNO").enabled = false;
+            FindButton("ButtonDecrementiel").enabled = false;
+            FindButton("ButtonLife").enabled = false;
         }
         else if (parameters.Difficulty == Difficulty.Custom)
         {
@@ -400,6 +433,7 @@ public class MainMenu : MonoBehaviour
             parameters.Difficulty = Difficulty.Easy;
             parameters.ScalingChange = false;
             parameters.GameTime = 60;
+            parameters.GameType = GameType.Decrement;
         }
         else if (button.name == "ButtonMedium")
         {
@@ -408,6 +442,7 @@ public class MainMenu : MonoBehaviour
             parameters.GameTime = 30;
             parameters.MinimumSizeScalingChange = 0.25f;
             parameters.CoolDownScalingChange = 1f;
+            parameters.GameType = GameType.Decrement;
         }
         else if (button.name == "ButtonHard")
         {
@@ -416,6 +451,7 @@ public class MainMenu : MonoBehaviour
             parameters.GameTime = 60;
             parameters.MinimumSizeScalingChange = 0.1f;
             parameters.CoolDownScalingChange = 0.75f;
+            parameters.GameType = GameType.Life;
         }
         else if (button.name == "ButtonCustom")
         {
@@ -424,6 +460,7 @@ public class MainMenu : MonoBehaviour
             parameters.GameTime = 60;
             parameters.MinimumSizeScalingChange = 0.25f;
             parameters.CoolDownScalingChange = 1.25f;
+            parameters.GameType = GameType.Decrement;
         }
         else if (button.name == "ButtonQuart")
         {
@@ -448,6 +485,14 @@ public class MainMenu : MonoBehaviour
         else if (button.name == "Button125")
         {
             parameters.CoolDownScalingChange = 1.25f;
+        }
+        else if (button.name == "ButtonDecrementiel")
+        {
+            parameters.GameType = GameType.Decrement;
+        }
+        else if (button.name == "ButtonLife")
+        {
+            parameters.GameType = GameType.Life;
         }
 
         ChangeColor();

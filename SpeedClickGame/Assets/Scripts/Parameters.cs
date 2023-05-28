@@ -11,6 +11,12 @@ public enum Difficulty
     Custom
 }
 
+public enum GameType
+{
+    Decrement,
+    Life
+}
+
 public class Parameters : MonoBehaviour
 {
     public static Parameters instance;
@@ -21,6 +27,8 @@ public class Parameters : MonoBehaviour
 
     public float CoolDownScalingChange = .75f;
     public float MinimumSizeScalingChange = .25f;
+
+    public GameType GameType = GameType.Decrement;
 
     private void Awake()
     {
